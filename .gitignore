@@ -1,0 +1,62 @@
+# ---------- æ•æ„Ÿé…ç½®ï¼šç»å¯¹ä¸è¦æäº¤ ----------
+# çœŸå®å¯†é’¥å†™åœ¨è¿™é‡Œï¼Œä»“åº“é‡Œåªç•™å ä½ç¬¦
+**/application-local.yml
+**/application-local.yaml
+**/application-local.properties
+.env
+.env.local
+*.pem
+*.key
+*.p12
+*.jks
+
+# ---------- Java / Maven ----------
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+*.class
+*.jar
+*.war
+*.log
+hs_err_pid*
+replay_pid*
+
+# ---------- å‰ç«¯ ----------
+node_modules/
+dist/
+dist-ssr/
+.vite/
+*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ---------- IDE ----------
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+!.vscode/extensions.json
+.settings/
+.project
+.classpath
+.factorypath
+
+# ---------- æ“ä½œç³»ç»Ÿ ----------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---------- æœ¬åœ°å¼€å‘è¾…åŠ©ï¼ˆä¸ä¸Šä¼ ï¼‰ ----------
+_setup/
+
+# ---------- ¸öÈË²ÄÁÏ£¨º¬ĞÕÃû/µç»°£¬²»ÉÏ´«£© ----------
+_resume_raw.txt
+resume*.txt
+resume*.pdf
+interview-intro/
+ÃæÊÔ*/
+
