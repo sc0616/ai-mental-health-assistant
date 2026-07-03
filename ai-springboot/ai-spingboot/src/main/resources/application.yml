@@ -1,0 +1,90 @@
+spring:
+  datasource:
+
+    url: jdbc:mysql://localhost:3306/mental_health_assisant?useSSL=false&serverTimezone=UTC
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:请填写你的数据库密码}
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password:       # 没设密码就留空
+      database: 0
+      timeout: 3000ms
+      connect-timeout: 3000ms
+      lettuce:
+        pool:
+          max-active: 16
+          max-idle: 8
+          min-idle: 2
+          max-wait: 2000ms
+
+  ai:
+    openai:
+      chat:
+        options:
+          model: deepseek-ai/DeepSeek-V3
+          tool-calling:
+            enabled: true
+        completions-path: /v1/chat/completions
+      # 向量化（RAG 检索用）。硅基流动的 bge-m3 输出 1024 维向量，
+      # 走 OpenAI 兼容的 /v1/embeddings 接口。
+      embedding:
+        options:
+          model: BAAI/bge-m3
+        embeddings-path: /v1/embeddings
+      # 大模型 API Key。
+      # 不要在这里写真实 key——本文件会提交到公开仓库，key 会被爬虫扫走盗用。
+      # 三种注入方式，任选其一：
+      #   1) 环境变量：AI_API_KEY=sk-xxx
+      #   2) 启动参数：--spring.ai.openai.api-key=sk-xxx
+      #   3) 本地不提交的配置文件（推荐）：见 README「本地配置」一节
+      api-key: ${AI_API_KEY:请填写你的API_KEY}
+      base-url: https://api.siliconflow.cn
+# 服务器配置
+server:
+  port: 1236
+
+# JWT配置
+jwt:
+  # 签名密钥。公开仓库里必须用占位符：密钥泄露意味着任何人都能伪造 token 冒充他人。
+  # 生产环境请用环境变量注入一个足够随机的长字符串。
+  secret: ${JWT_SECRET:请填写你的JWT密钥}
+  expiration: 86400000  # 24小时（毫秒）
+  refresh-expiration: 604800000  # 7天（毫秒）
+  header: Authorization  # token头部名称
+  token-prefix: "Bearer "  # token前缀
+
+# 咨询对话缓存配置
+chat:
+  cache:
+    # 总开关：关掉后完全走 MySQL，用于排查问题
+    enabled: true
+    # 会话消息缓存有效期：7天（与前端历史会话展示周期一致）
+    message-ttl-hours: 168
+    # 会话列表缓存有效期：30分钟（列表变动频繁，TTL 短一些）
+    session-list-ttl-minutes: 30
+
+# 知识库检索增强（RAG）配置
+rag:
+  # 总开关：关掉后 AI 对话不检索知识库，等价于改造前的行为
+  enabled: true
+  # 应用启动后是否自动为所有已发布文章建立索引
+  index-on-startup: true
+  # 文本切分：每个片段的目标字符数与重叠字符数。
+  # 重叠是为了避免句子正好被切断导致语义丢失。
+  chunk-size: 400
+  chunk-overlap: 80
+  # 检索返回的片段数量
+  top-k: 4
+  # 相似度下限（0~1）。低于该值的片段即使排进 top-k 也不使用，
+  # 避免"知识库里没有相关内容"时硬塞无关片段误导模型。
+  min-score: 0.35
+  # 送入模型的检索片段最多占用多少字符，防止把对话上下文挤爆
+  max-context-chars: 2000
+  # 是否启用工具调用（模型可在对话中主动查知识库、查用户情绪记录）
+  tool-calling-enabled: true
+  # 是否把"可用工具"说明注入系统提示词（能明显提升模型的调用意愿）
+  tool-prompt-enabled: true
+
